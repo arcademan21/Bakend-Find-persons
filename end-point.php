@@ -11,7 +11,6 @@ error_reporting(0);
 // Define list of allowed origins
 define("list_of_allowed_origins", [
     $_SERVER["HTTP_HOST"],
-    "http://localhost:3000",
     "http://localhost:8888",
     "http://localhost:8080",
     "Thunder Client (https://www.thunderclient.com)",

@@ -12,15 +12,15 @@
 // endif;
 
 // Database configuration (produccion)
-//$db_name = "find-persons-new";
-//$db_user = "bkphkluq_ndooburm";
-//$db_pass = "pROgY547Ge221";
+$db_name = "bkphkluq_find-persons-new";
+$db_user = "bkphkluq_ndooburm";
+$db_pass = "pROgY547Ge221";
 $smtp_password = "pROgY547Ge221";
 
 // Database configuration (desarrollo)
-$db_name = "find-persons-new";
-$db_user = "root";
-$db_pass = "root";
+// $db_name = "find-persons-new";
+// $db_user = "root";
+// $db_pass = "root";
 
 // Firebase configuration
 $apiKey = "AIzaSyCyk37Ey6buyE_a7zLwrLggvcg0Z-VAVhE";
