@@ -3,9 +3,7 @@
 "create_new_user": {
     "user_name": "",
     "user_email": "",
-    "password": "",
-    "role": "",
-    "status": ""
+    "password": ""
 },
 
 "get_user": {
@@ -26,24 +24,10 @@
     "user_id": "" 
 },
 
-"create_new_suscription": {
-    "user_id": "",
-    "user_name": "",
-    "user_email": "",
-    "status": "",
-    "ds_date": "",
-    "ds_expiry": "",
-    "ds_amount": "",
-    "ds_merchant_suscription_start_date": "",
-    "ds_merchant_matching_data": "",
-    "end_date": "",
-    "canceled_date": ""
-},
 
 "get_suscription": {
     "user_email": ""
 },
-
 
 "get_suscriptions": {
     "limit": "",
@@ -51,7 +35,7 @@
 },
 
 "down_suscription": {
-    "user_email": "String"
+    "user_email": ""
 },
 
 "delete_suscription": {
@@ -59,13 +43,12 @@
 },
 
 "update_suscription": {
-    "status": "",
+    "user_email": "",
     "ds_date": "",
     "ds_expiry": "",
     "ds_amount": "",
     "ds_merchant_suscription_start_date": "",
     "ds_merchant_matching_data": "",
-    "end_date": "",
     "canceled_date": ""
 },
 
@@ -74,8 +57,8 @@
 },
 
 "update_searchs": {
-    "user_email": "String",
-    "searchs": "String"
+    "user_email": "",
+    "searchs": ""
 },
 
 "get_downloads": {

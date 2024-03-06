@@ -1,5 +1,8 @@
 <?php
 
+// Hide errors
+error_reporting(0);
+
 // ---------------------------------------------------------
 /*
 * Controller petitions.
@@ -30,9 +33,13 @@ try {
     elseif( $petition_name === 'get_users' ) :
         echo $Crud->get_users( $petition );
         exit;
+        
+    elseif( $petition_name === 'get_suscription' ) :
+        echo $Crud->get_suscription( $petition );
+        exit;
 
     // Update user
-    elseif( $petition_name === 'update_user' ) :
+    elseif( $petition_name === 'update_user_password' ) :
         echo $Crud->update_user_password( $petition );
         exit;
 
@@ -54,6 +61,11 @@ try {
     // Update suscription
     elseif( $petition_name === 'update_suscription' ) :
         echo $Crud->update_suscription( $petition );
+        exit;
+        
+    // Delete suscription
+    elseif( $petition_name === 'delete_suscription' ) :
+        echo $Crud->delete_suscription( $petition );
         exit;
 
     // Update searchs
@@ -77,7 +89,7 @@ try {
         header('Content-Type: application/json');
         echo '{
             "status": "error",
-            "message": "Bad request"
+            "message": "Bad request, not found."
         }'; exit;
     endif;
 
@@ -89,7 +101,7 @@ try {
     header('Content-Type: application/json');
     echo '{
         "status": "error",
-        "message": "Internal Server Error",
+        "message": "Internal Server Error.",
         "error": "'.$e->getMessage().'"
     }'; exit;
     

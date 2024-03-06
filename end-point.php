@@ -1,11 +1,6 @@
 <?php
 
-// Mostrar errores
-ini_set("display_errors", 1);
-ini_set("display_startup_errors", 1);
-error_reporting(E_ALL);
-
-// No mostrar errores
+// Hide errors
 error_reporting(0);
 
 // Define list of allowed origins
@@ -36,7 +31,7 @@ else:
     header("Content-Type: application/json");
     echo '{
         "status": "error",
-        "message": "You are not allowed to access this endpoint"
+        "message": "You are not allowed to access this endpoint."
     }';
     exit();
 endif;
@@ -48,7 +43,7 @@ if (is_null($request)):
     if (empty($_REQUEST)):
         header("HTTP/1.1 400 Bad Request");
         header("Content-Type: application/json");
-        echo '{ "status": "error", "message": "Bad request" }';
+        echo '{ "status": "error", "message": "Bad request, is null" }';
         exit();
     else:
         $request = json_decode(json_encode($_REQUEST));
@@ -69,6 +64,7 @@ $is_same = array_keys($data_properties) == array_keys($petitions_scheme_properti
 
 // Validate data types
 if ($is_same) {
+    
     foreach ($data_properties as $key => $value) {
         if (gettype($value) != gettype($petitions_scheme_properties[$key])) {
             $is_same = false;
@@ -83,7 +79,7 @@ if (!$is_same):
     header("Content-Type: application/json");
     echo '{
         "status": "error",
-        "message": "Bad request"
+        "message": "Bad request, is not valid format."
     }';
     exit();
 endif;

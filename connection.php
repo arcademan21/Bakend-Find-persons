@@ -1,5 +1,8 @@
 <?php
 
+// Hide errors
+error_reporting(0);
+
 require 'config.php';
 
 try {

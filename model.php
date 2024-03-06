@@ -1,9 +1,7 @@
 <?php
 
-// Mostrar errores
-ini_set("display_errors", 1);
-ini_set("display_startup_errors", 1);
-error_reporting(E_ALL);
+// Hide errors
+error_reporting(0);
 
 
 // Use PHPMailer classes
@@ -45,8 +43,6 @@ class Crud extends AdminCrud
         $user_name = $petition->user_name;
         $user_email = $petition->user_email;
         $password = $petition->password;
-        $status = $petition->status;
-        $role = $petition->role;
         
         $invalid_user = self::check_user($user_email);
         if ( $invalid_user ):
@@ -59,8 +55,6 @@ class Crud extends AdminCrud
          user_name = :user_name,
          user_email = :user_email,
          password = :password,
-         status = :status,
-         role = :role,
          ip = :ip
         ';
 
@@ -69,8 +63,6 @@ class Crud extends AdminCrud
         $stmt->bindParam(":user_name", $user_name);
         $stmt->bindParam(":user_email", $user_email);
         $stmt->bindParam(":password", $password);
-        $stmt->bindParam(":status", $status);
-        $stmt->bindParam(":role", $role);
         $stmt->bindParam(":ip", $_SERVER["REMOTE_ADDR"]);
         
         // Todo: validate send email
@@ -148,15 +140,13 @@ class Crud extends AdminCrud
         created_at = :created_at,
         user_id = :user_id,
         user_name = :user_name, 
-        user_email = :user_email,
-        status = :status";
+        user_email = :user_email";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $user->id);
         $stmt->bindParam(":created_at", date("Y-m-d H:i:s"));
         $stmt->bindParam(":user_name", $user->user_name);
         $stmt->bindParam(":user_email", $user->user_email);
-        $stmt->bindParam(":status", $user->status);
         
         // // Send suscription email
         // $petition->user_email_type = "suscription_email";
@@ -191,7 +181,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $suscription = $petition->petition->get_suscription;
+        $suscription = $petition->petition->data->get_suscription;
 
         // Get suscription
         $query = "SELECT * FROM Suscriptions WHERE user_email = :user_email";
@@ -221,7 +211,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $suscriptions = $petition->petition->get_suscriptions;
+        $suscriptions = $petition->petition->data->get_suscriptions;
         $limit = $suscriptions->limit;
         $offset = $suscriptions->offset;
 
@@ -252,7 +242,7 @@ class Crud extends AdminCrud
     // Update suscription
     public function update_suscription( $petition ){
 
-        $suscription = $petition->petition->update_suscription;
+        $suscription = $petition->petition->data->update_suscription;
 
         // Todo : Validate role user
 
@@ -260,76 +250,46 @@ class Crud extends AdminCrud
         if( json_decode( $check_suscription )->status === "error" ):
             return $check_suscription;
         endif;
-
-        if( json_decode( $check_suscription )->type === "trial" ):
-            
-            // Update suscription
-            $query = "UPDATE Suscriptions SET 
-            user_name = :user_name,
-            status = :status 
-            ds_date = :ds_date,
-            ds_expiry = :ds_expiry,
-            ds_amount = :ds_amount,
-            ds_merchant_suscription_start_date = :ds_merchant_suscription_start_date,
-            ds_merchant_matching_data = :ds_merchant_matching_data
-            WHERE user_email = :user_email";
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":user_name", $suscription->user_name);
-            $stmt->bindParam(":status", $suscription->status);
-            $stmt->bindParam(":ds_date", $suscription->ds_date);
-            $stmt->bindParam(":ds_expiry", $suscription->ds_expiry);
-            $stmt->bindParam(":ds_amount", $suscription->ds_amount);
-            $stmt->bindParam(":ds_merchant_suscription_start_date", $suscription->ds_merchant_suscription_start_date);
-            $stmt->bindParam(":ds_merchant_matching_data", $suscription->ds_merchant_matching_data);
-            
-            $result = $stmt->execute();
-
-            if (!$result):
-                return '{
-                    "status": "error",
-                    "message": "Suscription not updated"
-                }';
-            endif;
-
-            // Return success
+        
+        if( json_decode( $check_suscription )->type !== "trial" ):
             return '{
-                "status": "success",
-                "message": "Suscription updated successfully ( trial case ) "
-                "data": ' .json_decode($result).'
+                "status": "error",
+                "message": "Suscription actived , you cant not update it."
             }';
-
         endif;
 
-        if( json_decode( $check_suscription )->type === "active" ):
-            
-            // Update suscription
-            $query = "UPDATE Suscriptions SET
-            status = :status 
-            WHERE user_email = :user_email";
+        // Update suscription
+        $query = "UPDATE Suscriptions SET 
+        user_email = :user_email,
+        ds_date = :ds_date,
+        ds_expiry = :ds_expiry,
+        ds_amount = :ds_amount,
+        ds_merchant_suscription_start_date = :ds_merchant_suscription_start_date,
+        ds_merchant_matching_data = :ds_merchant_matching_data
+        WHERE user_email = :user_email";
 
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":status", $suscription->status);
-            $result = $stmt->execute();
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_email", $suscription->user_email);
+        $stmt->bindParam(":ds_date", $suscription->ds_date);
+        $stmt->bindParam(":ds_expiry", $suscription->ds_expiry);
+        $stmt->bindParam(":ds_amount", $suscription->ds_amount);
+        $stmt->bindParam(":ds_merchant_suscription_start_date", $suscription->ds_merchant_suscription_start_date);
+        $stmt->bindParam(":ds_merchant_matching_data", $suscription->ds_merchant_matching_data);
+        $result = $stmt->execute();
 
-            if (!$result):
-                return '{
-                    "status": "error",
-                    "message": "Suscription not updated"
-                }';
-            endif;
-
-            // Return success
+        if (!$result):
             return '{
-                "status": "success",
-                "message": "Suscription updated successfully ( active case ) "
-                "data": ' .json_decode($result).'
+                "status": "error",
+                "message": "Suscription not updated"
             }';
-
         endif;
 
-        return false;
-
+        // Return success
+        return '{
+            "status": "success",
+            "message": "Suscription updated successfully ( trial case ) "
+        }';
+        
     }
 
     // Delete suscription
@@ -337,18 +297,19 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $suscription = $petition->petition->delete_suscription;
+        $suscription = $petition->petition->data->delete_suscription;
 
         // Delete suscription
         $query = "DELETE FROM Suscriptions WHERE user_email = :user_email";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_email", $suscription->user_email);
-        $result = $stmt->execute();
+        $stmt->execute();
+        $rows = $stmt->rowCount();
 
-        if (!$result):
+        if ($rows < 1):
             return '{
                 "status": "error",
-                "message": "Suscription not deleted"
+                "message": "Suscription not deleted, suscription not found."
             }';
         endif;
 
@@ -364,7 +325,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $suscription = $petition->petition->down_suscription;
+        $suscription = $petition->petition->data->down_suscription;
 
         $check_suscription = self::check_user_suscribed( $suscription->user_email );
         if( json_decode( $check_suscription )->status === "error" ):
@@ -381,7 +342,7 @@ class Crud extends AdminCrud
         if(json_decode($check_suscription)->type === "canceled"):
             return '{
                 "status": "error",
-                "message": "Suscription already canceled"
+                "message": "Suscription already canceled."
             }';
         endif;
 
@@ -400,12 +361,12 @@ class Crud extends AdminCrud
         
         if( json_decode( $check_suscription )->type === "trial" ):
             
-            $stmt->bindParam(":reason", "user request trial");
+            $stmt->bindParam(":reason", "trial time status");
             $result = $stmt->execute();
             if (!$result):
                 return '{
                     "status": "error",
-                    "message": "Suscription not down"
+                    "message": "Suscription not down."
                 }';
             endif;
 
@@ -416,30 +377,38 @@ class Crud extends AdminCrud
             }';
 
         endif;
-
+        
+        $stmt->bindParam(":reason", "active status");
         $result = $stmt->execute();
+        
+        if(!$result){
+            // Return error
+            return '{
+                "status": "error",
+                "message": "Suscription not down."
+            }';
+        }
 
         // Return success
         return '{
             "status": "success",
             "message": "Suscription down successfully"
         }';
+        
     }
 
     // Check user exists
-    private function check_user($trigger)
+    private function check_user($user_email)
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
         
         // Check if user exists
-        $query = "SELECT * FROM Users 
-        WHERE user_id = :user_id 
-        OR user_email = :user_email";
+        $query = "SELECT * FROM Users
+        WHERE user_email = :user_email";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $trigger);
-        $stmt->bindParam(":user_email", $trigger);
+        $stmt->bindParam(":user_email", $user_email);
         $stmt->execute();
         $num = $stmt->rowCount();
 
@@ -477,7 +446,7 @@ class Crud extends AdminCrud
     }
 
     // Check user suscribed
-    private function check_user_suscribed( $email )
+    private function check_user_suscribed( $user_email )
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
@@ -485,16 +454,18 @@ class Crud extends AdminCrud
         // Check if user exists
         $query = "SELECT * FROM Suscriptions WHERE user_email = :user_email";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_email", $email);
+        $stmt->bindParam(":user_email", $user_email);
         $stmt->execute();
-        $result = $stmt->rowCount();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ( $result < 1 ):
+        if ( count($result) < 1 ):
             return '{
                 "status": "error",
                 "message": "User not suscribed."
             }';
         endif;
+        
+        $result = json_decode(json_encode($result));
 
         if( $result->status === "down" ):
             return '{
@@ -529,7 +500,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $users = $petition->petition->get_users;
+        $users = $petition->petition->data->get_users;
         $limit = $users->limit;
         $offset = $users->offset;
 
@@ -540,6 +511,13 @@ class Crud extends AdminCrud
         $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
         $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$results):
+            return '{
+                "status": "error",
+                "message": "Users not found"
+            }';
+        endif;
 
         // Return users
         return '{
@@ -555,7 +533,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $user = $petition->petition->update_user_password;
+        $user = $petition->petition->data->update_user_password;
 
         // Validate user exists
         $valid_user = self::check_user($user->user_email);
@@ -566,6 +544,7 @@ class Crud extends AdminCrud
         // Update user
         $query = "UPDATE Users SET password = :password WHERE user_email = :user_email";
         $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_email", $user->user_email);
         $stmt->bindParam(":password", $user->password);
         $result = $stmt->execute();
 
@@ -589,16 +568,10 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $user = $petition->petition->delete_user;
-
-        // Validate user exists
-        $valid_user = self::check_user($user->user_id);
-        if (!$valid_user):
-            return $valid_user;
-        endif;
+        $user = $petition->petition->data->delete_user;
 
         // Delete user
-        $query = "DELETE FROM Users WHERE user_id = :user_id";
+        $query = "DELETE FROM Users WHERE id = :user_id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $user->user_id);
         $stmt->execute();
@@ -608,6 +581,7 @@ class Crud extends AdminCrud
             "status": "success",
             "message": "User deleted successfully"
         }';
+        
     }
 
     // Send email
@@ -790,7 +764,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $searchs = $petition->petition->get_searchs;
+        $searchs = $petition->petition->data->get_searchs;
 
         // Get search
         $query = "SELECT searchs FROM Users WHERE user_email = :user_email";
@@ -820,7 +794,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $searchs = $petition->petition->update_searchs;
+        $searchs = $petition->petition->data->update_searchs;
 
         // Update searchs
         $query = "UPDATE Users SET searchs = :searchs WHERE user_email = :user_email";
@@ -848,7 +822,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $downloads = $petition->petition->get_downloads;
+        $downloads = $petition->petition->data->get_downloads;
 
         // Get downloads
         $query = "SELECT downloads FROM Users WHERE user_email = :user_email";
@@ -878,7 +852,7 @@ class Crud extends AdminCrud
     {
         // Sanitize petition
         //$petition = self::sanitize_petition($petition);
-        $downloads = $petition->petition->update_downloads;
+        $downloads = $petition->petition->data->update_downloads;
 
         // Update downloads
         $query = "UPDATE Users SET downloads = :downloads WHERE user_email = :user_email";
@@ -901,8 +875,6 @@ class Crud extends AdminCrud
         }';
 
     }
-
-    
 
     // Create right to be forgotten
     public function create_right_to_beforgotten($petition)

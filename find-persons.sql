@@ -4,7 +4,7 @@ CREATE TABLE Users (
     user_name VARCHAR( 100 ) NOT NULL,
     user_email VARCHAR( 100 ) NOT NULL,
     password VARCHAR( 100 ) NOT NULL,
-    status VARCHAR( 100 ) NOT NULL,
+    status VARCHAR( 100 ) DEFAULT 'active',
     role VARCHAR( 100 ) DEFAULT 'suscriber',
     created_at DATETIME DEFAULT NULL,
     searchs LONGTEXT DEFAULT NULL,
@@ -15,8 +15,8 @@ CREATE TABLE Users (
 -- Create a table called Suscriptions.
 CREATE TABLE Suscriptions (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
     created_at DATETIME DEFAULT NULL,
-    user_id INT NOT NULL,
     user_name VARCHAR( 100 ) DEFAULT NULL,
     user_email VARCHAR( 100 ) NOT NULL,
     status VARCHAR( 100 ) DEFAULT 'trial',
@@ -27,7 +27,8 @@ CREATE TABLE Suscriptions (
     ds_merchant_matching_data VARCHAR( 100 ) DEFAULT NULL,
     end_date DATETIME DEFAULT NULL,
     canceled_date DATETIME DEFAULT NULL,
-    reason VARCHAR( 100 ) DEFAULT NULL
+    reason VARCHAR( 100 ) DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
 -- Create a table called RightToBeforgotten.
