@@ -1,0 +1,100 @@
+{
+
+"create_new_user": {
+    "user_name": "",
+    "user_email": "",
+    "password": "",
+    "role": "",
+    "status": ""
+},
+
+"get_user": {
+    "user_email": ""
+},
+
+"get_users": {
+    "limit": 0,
+    "offset": 0
+},
+
+"update_user_password": {
+    "user_email": "",
+    "password": ""
+},
+
+"delete_user": { 
+    "user_id": "" 
+},
+
+"create_new_suscription": {
+    "user_id": "",
+    "user_name": "",
+    "user_email": "",
+    "status": "",
+    "ds_date": "",
+    "ds_expiry": "",
+    "ds_amount": "",
+    "ds_merchant_suscription_start_date": "",
+    "ds_merchant_matching_data": "",
+    "end_date": "",
+    "canceled_date": ""
+},
+
+"get_suscription": {
+    "user_email": ""
+},
+
+
+"get_suscriptions": {
+    "limit": "",
+    "offset": ""
+},
+
+"down_suscription": {
+    "user_email": "String"
+},
+
+"delete_suscription": {
+    "user_email": ""
+},
+
+"update_suscription": {
+    "status": "",
+    "ds_date": "",
+    "ds_expiry": "",
+    "ds_amount": "",
+    "ds_merchant_suscription_start_date": "",
+    "ds_merchant_matching_data": "",
+    "end_date": "",
+    "canceled_date": ""
+},
+
+
+"get_searchs": {
+    "user_email": ""
+},
+
+"update_searchs": {
+    "user_email": "String",
+    "searchs": "String"
+},
+
+"get_downloads": {
+    "user_email": ""
+},
+
+"update_downloads": {
+    "user_email": "",
+    "downloads": ""
+},
+
+"create_right_to_beforgotten": {
+    "user_email": "",
+    "status": "",
+    "forgotten_name": "",
+    "forgotten_reason": ""
+}
+
+}
+
+   

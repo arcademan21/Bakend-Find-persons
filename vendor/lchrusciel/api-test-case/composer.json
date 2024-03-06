@@ -1,0 +1,78 @@
+{
+    "name": "lchrusciel/api-test-case",
+    "description": "Perfect PHPUnit TestCase for JSON/XML API TDD with Symfony.",
+    "keywords": ["TDD", "Symfony", "PHPUnit", "Doctrine", "API", "JSON", "XML"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Łukasz Chruściel",
+            "email": "lchrusciel@gmail.com"
+        },
+        {
+            "name": "Paweł Jędrzejewski",
+            "homepage": "http://pjedrzejewski.com",
+            "email": "me@pjedrzejewski.com"
+        },
+        {
+            "name": "Michał Marcinkowski",
+            "email": "michal.marcinkowski@lakion.com"
+        },
+        {
+            "name": "Arkadiusz Krakowiak",
+            "email": "arkadiusz.k.e@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+
+        "coduo/php-matcher": "^6.0",
+        "openlss/lib-array2xml": "^1.0",
+        "doctrine/data-fixtures": "^1.2",
+        "doctrine/doctrine-bundle": "^2.0",
+        "doctrine/orm": "^2.5",
+        "nelmio/alice": "^3.6",
+        "phpspec/php-diff": "^1.1",
+        "phpunit/phpunit": "^9.0 || ^10.0",
+        "symfony/browser-kit": "^6.4 || ^7.0",
+        "symfony/finder": "^6.4 || ^7.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0",
+        "theofidry/alice-data-fixtures": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan-strict-rules": "^1.0",
+        "phpstan/phpstan-webmozart-assert": "^1.0",
+        "symfony/serializer": "^5.4 || ^6.0",
+        "phpstan/phpstan": "^1.8"
+    },
+    "scripts": {
+        "analyse": [
+            "vendor/bin/phpstan analyse --ansi --no-progress src"
+        ]
+    },
+    "suggest": {
+        "polishsymfonycommunity/symfony-mocker-container": "For mocking container services and external APIs"
+    },
+    "autoload": {
+        "psr-4": {
+            "ApiTestCase\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApiTestCase\\Test\\": "test/src/",
+            "ApiTestCase\\Test\\App\\": "test/app/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "5.2-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
